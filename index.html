@@ -3,587 +3,875 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Couple Finance Calculator</title>
+<title>Paycheck Planner — Know exactly what to do with every paycheck</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
 <style>
+/* ── TOKENS ── */
 :root {
-  --ink:      #1A1A1A;
-  --cream:    #FAF9F6;
-  --white:    #FFFFFF;
-  --pink:     #FF385C;
-  --pink-soft:#FFF0F3;
-  --pink-deep:#E0002A;
-  --gray-50:  #F7F7F5;
-  --gray-100: #EFEFEC;
-  --gray-200: #DEDEDE;
-  --gray-400: #999999;
-  --gray-600: #666666;
-  --gray-800: #333333;
-  --green:    #1A7A28;
-  --green-bg: #F0FAF0;
-  --amber:    #B45309;
-  --amber-bg: #FFFBEB;
-  --red:      #CC3300;
-  --red-bg:   #FFF2EE;
+  --ink:       #1A1A1A;
+  --ink-80:    rgba(26,26,26,0.8);
+  --cream:     #FAF9F6;
+  --white:     #FFFFFF;
+  --pink:      #FF385C;
+  --pink-soft: #FFF0F3;
+  --pink-deep: #D6003A;
+  --pink-mid:  rgba(255,56,92,0.12);
+  --gray-50:   #F7F7F5;
+  --gray-100:  #EFEFEC;
+  --gray-200:  #DEDEDE;
+  --gray-300:  #C8C8C8;
+  --gray-400:  #999999;
+  --gray-600:  #666666;
+  --gray-800:  #333333;
+  --green:     #1A7A28;
+  --green-bg:  #EDF7EE;
+  --amber:     #B45309;
+  --amber-bg:  #FFFBEB;
+  --red:       #CC3300;
+  --red-bg:    #FFF2EE;
+  --radius:    6px;
+  --radius-lg: 10px;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
+
+/* ── RESET ── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
 body { font-family:'DM Sans',system-ui,sans-serif; background:var(--cream); color:var(--ink); line-height:1.55; -webkit-font-smoothing:antialiased; font-size:15px; }
+a { text-decoration:none; color:inherit; }
 
-/* NAV */
-nav { background:var(--ink); height:64px; padding:0 40px; display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid var(--pink); position:sticky; top:0; z-index:50; }
-.logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
-.logo-mark { width:32px; height:32px; background:var(--pink); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; line-height:1; }
-.logo-name { font-family:'Fraunces',serif; font-size:18px; font-weight:500; color:#fff; letter-spacing:-0.02em; }
-.logo-tag { font-size:12px; color:rgba(255,255,255,0.45); padding-left:14px; margin-left:2px; border-left:1px solid rgba(255,255,255,0.15); }
+/* ── NAV ── */
+.nav {
+  background:var(--ink); height:60px; padding:0 40px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:3px solid var(--pink);
+  position:sticky; top:0; z-index:100;
+}
+.nav-logo { display:flex; align-items:center; gap:10px; }
+.nav-mark {
+  width:30px; height:30px; background:var(--pink); border-radius:var(--radius);
+  display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px;
+}
+.nav-name { font-family:'Fraunces',serif; font-size:17px; font-weight:500; color:#fff; letter-spacing:-0.02em; }
+.nav-badge {
+  font-size:11px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase;
+  color:rgba(255,255,255,0.45); border-left:1px solid rgba(255,255,255,0.12);
+  padding-left:12px; margin-left:2px;
+}
+.nav-cta {
+  font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700;
+  padding:8px 20px; border:2px solid rgba(255,255,255,0.2); border-radius:100px;
+  color:#fff; cursor:pointer; background:transparent; transition:all 0.15s;
+}
+.nav-cta:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.35); }
 
-/* HERO */
-.hero { background:var(--ink); padding:64px 40px 72px; position:relative; overflow:hidden; }
-.hero::before { content:''; position:absolute; top:-80px; right:-100px; width:480px; height:480px; background:radial-gradient(circle,rgba(255,56,92,0.18) 0%,transparent 65%); border-radius:50%; pointer-events:none; }
-.hero-inner { max-width:1100px; margin:0 auto; position:relative; }
-.eyebrow { font-size:11px; text-transform:uppercase; letter-spacing:0.15em; font-weight:700; color:var(--pink); margin-bottom:16px; display:block; }
-.hero h1 { font-family:'Fraunces',serif; font-weight:500; font-size:clamp(38px,5vw,60px); color:#fff; line-height:1.05; letter-spacing:-0.025em; margin-bottom:20px; max-width:760px; }
+/* ── HERO ── */
+.hero {
+  background:var(--ink); padding:88px 40px 96px;
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:-140px; right:-160px;
+  width:600px; height:600px;
+  background:radial-gradient(circle,rgba(255,56,92,0.2) 0%,transparent 65%);
+  border-radius:50%; pointer-events:none;
+}
+.hero::after {
+  content:''; position:absolute; bottom:-80px; left:-80px;
+  width:360px; height:360px;
+  background:radial-gradient(circle,rgba(255,56,92,0.07) 0%,transparent 65%);
+  border-radius:50%; pointer-events:none;
+}
+.hero-inner { max-width:780px; margin:0 auto; position:relative; text-align:center; }
+.hero-eyebrow {
+  display:inline-block; font-size:11px; font-weight:700; letter-spacing:0.15em;
+  text-transform:uppercase; color:var(--pink); margin-bottom:24px;
+  background:rgba(255,56,92,0.12); padding:5px 14px; border-radius:100px;
+}
+.hero h1 {
+  font-family:'Fraunces',serif; font-weight:500;
+  font-size:clamp(40px,6vw,68px); line-height:1.02; letter-spacing:-0.03em;
+  color:#fff; margin-bottom:24px;
+}
 .hero h1 em { color:var(--pink); font-style:normal; }
-.hero p { font-size:17px; color:rgba(255,255,255,0.6); max-width:540px; line-height:1.65; }
+.hero-sub {
+  font-size:18px; color:rgba(255,255,255,0.6); line-height:1.7;
+  max-width:560px; margin:0 auto 40px;
+}
+.hero-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.btn-hero-primary {
+  font-family:'DM Sans',sans-serif; font-size:15px; font-weight:700;
+  padding:15px 36px; border:none; border-radius:var(--radius);
+  background:var(--pink); color:#fff; cursor:pointer; transition:all 0.2s;
+}
+.btn-hero-primary:hover { background:var(--pink-deep); box-shadow:0 8px 28px rgba(255,56,92,0.4); transform:translateY(-1px); }
+.btn-hero-secondary {
+  font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600;
+  padding:15px 36px; border:2px solid rgba(255,255,255,0.25); border-radius:var(--radius);
+  background:transparent; color:#fff; cursor:pointer; transition:all 0.2s;
+}
+.btn-hero-secondary:hover { border-color:rgba(255,255,255,0.5); background:rgba(255,255,255,0.06); }
 
-/* MAIN */
-.main { max-width:1100px; margin:0 auto; padding:52px 40px 100px; }
+/* ── PREVIEW SECTION ── */
+.preview-section { padding:80px 40px; background:var(--cream); }
+.section-inner { max-width:960px; margin:0 auto; }
+.section-eyebrow {
+  font-size:11px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase;
+  color:var(--pink); margin-bottom:12px; display:block;
+}
+.section-heading {
+  font-family:'Fraunces',serif; font-size:clamp(28px,3vw,40px); font-weight:500;
+  color:var(--ink); letter-spacing:-0.02em; margin-bottom:40px; line-height:1.1;
+}
+.preview-card {
+  background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius-lg);
+  padding:40px 48px; display:grid; grid-template-columns:1fr 1fr; gap:48px;
+  align-items:start;
+}
+.preview-label {
+  font-size:10px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--gray-400); margin-bottom:20px; display:block;
+}
+.preview-month { font-family:'Fraunces',serif; font-size:20px; font-weight:500; color:var(--ink); margin-bottom:20px; }
+.preview-block { margin-bottom:20px; }
+.preview-block-head {
+  font-size:13px; font-weight:700; color:var(--ink); margin-bottom:8px;
+  display:flex; align-items:center; gap:8px;
+}
+.preview-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.pd-a { background:var(--pink); }
+.pd-b { background:var(--ink); }
+.preview-step {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:8px 12px; border-radius:var(--radius); margin-bottom:4px; font-size:13px;
+}
+.ps-keep { background:var(--green-bg); }
+.ps-xfer { background:var(--pink-soft); }
+.ps-keep .ps-label { color:var(--green); font-weight:600; }
+.ps-xfer .ps-label { color:var(--pink-deep); font-weight:600; }
+.ps-keep .ps-amt { color:var(--green); font-weight:700; }
+.ps-xfer .ps-amt { color:var(--pink); font-weight:700; }
+.preview-right { display:flex; flex-direction:column; justify-content:center; }
+.preview-right h3 { font-family:'Fraunces',serif; font-size:24px; font-weight:500; color:var(--ink); margin-bottom:14px; line-height:1.25; }
+.preview-right p { font-size:15px; color:var(--gray-600); line-height:1.7; margin-bottom:20px; }
+.preview-items { list-style:none; }
+.preview-items li {
+  font-size:14px; color:var(--gray-600); padding:6px 0;
+  border-bottom:1px solid var(--gray-100); display:flex; align-items:center; gap:10px;
+}
+.preview-items li:last-child { border-bottom:none; }
+.preview-items li::before { content:'✓'; color:var(--pink); font-weight:700; flex-shrink:0; }
 
-/* TABS */
-.tab-bar { display:flex; border-bottom:2px solid var(--gray-200); margin-bottom:40px; }
-.tab-btn { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:14px 26px; border:none; background:transparent; color:var(--gray-400); cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; transition:all 0.15s; }
-.tab-btn:hover { color:var(--ink); }
-.tab-btn.active { color:var(--pink); border-bottom-color:var(--pink); }
-.tab-pane { display:none; }
-.tab-pane.active { display:block; }
+/* ── DIVIDER ── */
+.section-divider { height:1px; background:var(--gray-200); max-width:960px; margin:0 auto; }
 
-/* CARDS */
-.card { background:var(--white); border:1px solid var(--gray-200); border-top:3px solid var(--ink); border-radius:4px; padding:36px 40px; margin-bottom:20px; }
-.card.accent { border-top-color:var(--pink); }
-.card-lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:var(--gray-400); margin-bottom:24px; display:flex; align-items:center; gap:12px; }
-.card-lbl::after { content:''; flex:1; height:1px; background:var(--gray-100); }
+/* ── PLAN BUILDER ── */
+.builder-section { padding:80px 40px; background:var(--white); }
+.builder-inner { max-width:960px; margin:0 auto; }
+.builder-intro { margin-bottom:48px; }
+.step-flow { display:flex; gap:0; margin-bottom:48px; overflow:hidden; border:1px solid var(--gray-200); border-radius:var(--radius-lg); }
+.step-tab {
+  flex:1; padding:16px 20px; background:var(--gray-50); border:none;
+  font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700;
+  letter-spacing:0.08em; text-transform:uppercase; color:var(--gray-400);
+  cursor:pointer; border-right:1px solid var(--gray-200); transition:all 0.15s;
+  display:flex; align-items:center; gap:10px; text-align:left;
+}
+.step-tab:last-child { border-right:none; }
+.step-tab:hover { background:var(--white); color:var(--ink); }
+.step-tab.active { background:var(--white); color:var(--pink); }
+.step-num {
+  width:24px; height:24px; border-radius:50%; border:2px solid currentColor;
+  display:flex; align-items:center; justify-content:center; font-size:11px;
+  font-weight:800; flex-shrink:0;
+}
+.step-tab.active .step-num { background:var(--pink); border-color:var(--pink); color:#fff; }
+.step-pane { display:none; }
+.step-pane.active { display:block; }
 
-/* PERSON GRID */
-.pgrid { display:grid; grid-template-columns:1fr 1fr; gap:28px; }
-.phead { display:flex; align-items:center; gap:10px; margin-bottom:18px; padding-bottom:16px; border-bottom:1px solid var(--gray-100); }
+/* ── CARDS ── */
+.card {
+  background:var(--white); border:1px solid var(--gray-200);
+  border-top:3px solid var(--ink); border-radius:var(--radius-lg);
+  padding:32px 36px; margin-bottom:16px;
+}
+.card.pink-top { border-top-color:var(--pink); }
+.card-header { margin-bottom:24px; }
+.card-title {
+  font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.14em;
+  color:var(--gray-400); display:flex; align-items:center; gap:12px; margin-bottom:6px;
+}
+.card-title::after { content:''; flex:1; height:1px; background:var(--gray-100); }
+.card-desc { font-size:13px; color:var(--gray-600); line-height:1.6; }
+
+/* ── PERSON COLUMNS ── */
+.pgrid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.pcol-head {
+  display:flex; align-items:center; gap:10px; margin-bottom:18px;
+  padding-bottom:16px; border-bottom:1px solid var(--gray-100);
+}
 .pdot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
 .pdot-a { background:var(--pink); }
 .pdot-b { background:var(--ink); }
-.phead-text { }
+.pcol-meta { }
 .plabel { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--gray-400); margin-bottom:4px; }
-.pname-inp { font-family:'DM Sans',sans-serif; font-size:16px; font-weight:600; border:none; outline:none; background:transparent; color:var(--ink); border-bottom:2px solid var(--gray-200); padding:2px 0; width:140px; transition:border-color 0.15s; }
+.pname-inp {
+  font-family:'DM Sans',sans-serif; font-size:16px; font-weight:600;
+  border:none; outline:none; background:transparent; color:var(--ink);
+  border-bottom:2px solid var(--gray-200); padding:2px 0; width:150px; transition:border-color 0.15s;
+}
 .pname-inp:focus { border-bottom-color:var(--pink); }
 .pname-inp::placeholder { color:var(--gray-400); font-weight:400; }
 
-/* FIELD ROWS */
-.frow { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+/* ── INPUTS ── */
+.frow { display:flex; align-items:center; gap:12px; margin-bottom:11px; }
 .frow label { flex:1; font-size:13px; color:var(--gray-600); margin:0; }
-input[type="number"],input[type="text"],select { font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; padding:9px 13px; border:1.5px solid var(--gray-200); border-radius:4px; background:var(--gray-50); color:var(--ink); outline:none; transition:all 0.15s; width:100%; }
-input[type="number"]:focus,input[type="text"]:focus,select:focus { border-color:var(--pink); background:var(--white); box-shadow:0 0 0 3px rgba(255,56,92,0.1); }
-input.amt { width:128px; text-align:right; }
-input.amt-sm { width:104px; text-align:right; }
+input[type="number"], input[type="text"], select {
+  font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500;
+  padding:9px 13px; border:1.5px solid var(--gray-200); border-radius:var(--radius);
+  background:var(--gray-50); color:var(--ink); outline:none; transition:all 0.15s; width:100%;
+}
+input[type="number"]:focus, input[type="text"]:focus, select:focus {
+  border-color:var(--pink); background:var(--white); box-shadow:0 0 0 3px rgba(255,56,92,0.08);
+}
+input.amt { width:120px; text-align:right; }
+input.amt-sm { width:100px; text-align:right; }
 input.ninp { flex:1; }
 input[type="range"] { flex:1; accent-color:var(--pink); cursor:pointer; padding:0; border:none; background:transparent; box-shadow:none; }
 input[type="range"]:focus { box-shadow:none; border:none; }
 input[type="checkbox"] { accent-color:var(--pink); width:15px; height:15px; cursor:pointer; flex-shrink:0; padding:0; border:none; background:transparent; box-shadow:none; }
 
-/* EXPENSE / ACCOUNT ROWS */
-.erow,.arow { display:flex; align-items:center; gap:10px; padding:10px 14px; margin-bottom:6px; border:1.5px solid var(--gray-200); border-radius:4px; background:var(--gray-50); transition:border-color 0.15s; }
-.erow:hover,.arow:hover { border-color:var(--gray-400); }
-.erow.drag-over { border-color:var(--pink); box-shadow:0 0 0 2px rgba(255,56,92,0.12); }
+/* ── EXPENSE ROWS ── */
+.erow, .arow {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 13px; margin-bottom:6px;
+  border:1.5px solid var(--gray-200); border-radius:var(--radius);
+  background:var(--gray-50); transition:border-color 0.15s;
+}
+.erow:hover, .arow:hover { border-color:var(--gray-400); }
+.erow.drag-over { border-color:var(--pink); box-shadow:0 0 0 2px rgba(255,56,92,0.1); }
 .erow.dragging { opacity:0.3; }
-.dh { color:var(--gray-400); font-size:15px; cursor:grab; user-select:none; flex-shrink:0; line-height:1; }
+.dh { color:var(--gray-300); font-size:14px; cursor:grab; user-select:none; flex-shrink:0; }
 .dh:active { cursor:grabbing; }
 
-/* TOTAL BAR */
-.tbar { display:flex; justify-content:space-between; align-items:center; background:var(--pink-soft); border:1px solid rgba(255,56,92,0.2); border-left:4px solid var(--pink); border-radius:0 4px 4px 0; padding:12px 20px; margin-top:18px; }
-.tbar .tl { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--pink-deep); }
-.tbar .tv { font-family:'Fraunces',serif; font-size:26px; color:var(--pink-deep); }
+/* ── TOTAL BAR ── */
+.total-bar {
+  display:flex; justify-content:space-between; align-items:center;
+  background:var(--pink-soft); border-left:4px solid var(--pink);
+  border-radius:0 var(--radius) var(--radius) 0; padding:12px 18px; margin-top:16px;
+}
+.total-bar .tl { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--pink-deep); }
+.total-bar .tv { font-family:'Fraunces',serif; font-size:26px; color:var(--pink-deep); }
 
-/* TOGGLE ROW */
-.trow { display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--gray-50); border:1.5px solid var(--gray-200); border-radius:4px; }
-.trow label { font-size:13px; color:var(--gray-600); flex:1; cursor:pointer; margin:0; }
-.tnote { background:var(--amber-bg); border:1px solid rgba(180,83,9,0.2); border-left:3px solid var(--amber); border-radius:0 4px 4px 0; padding:9px 14px; font-size:12px; color:var(--amber); margin-top:4px; display:none; }
-.tnote.show { display:block; }
+/* ── TOGGLE ROW ── */
+.toggle-row {
+  display:flex; align-items:center; gap:10px; padding:10px 14px;
+  background:var(--gray-50); border:1.5px solid var(--gray-200); border-radius:var(--radius);
+  margin-top:10px;
+}
+.toggle-row label { font-size:13px; color:var(--gray-600); flex:1; cursor:pointer; margin:0; }
+.toggle-note {
+  background:var(--amber-bg); border-left:3px solid var(--amber);
+  border-radius:0 var(--radius) var(--radius) 0; padding:9px 14px;
+  font-size:12px; color:var(--amber); margin-top:4px; display:none;
+}
+.toggle-note.show { display:block; }
 
-/* SPLIT */
-.spill { font-size:11px; font-weight:800; letter-spacing:0.04em; background:var(--ink); color:#fff; padding:5px 12px; border-radius:100px; min-width:82px; text-align:center; flex-shrink:0; }
-.sresult { display:flex; justify-content:space-between; background:var(--gray-50); border:1px solid var(--gray-200); border-radius:4px; padding:12px 18px; margin-top:8px; }
-.sa { font-size:14px; font-weight:700; color:var(--pink); }
-.sb { font-size:14px; font-weight:700; color:var(--ink); }
+/* ── SPLIT ── */
+.split-pill {
+  font-size:11px; font-weight:800; letter-spacing:0.04em; background:var(--ink); color:#fff;
+  padding:5px 12px; border-radius:100px; min-width:80px; text-align:center; flex-shrink:0;
+}
+.split-result {
+  display:flex; justify-content:space-between;
+  background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius);
+  padding:12px 18px; margin-top:8px;
+}
+.split-a { font-size:14px; font-weight:700; color:var(--pink); }
+.split-b { font-size:14px; font-weight:700; color:var(--ink); }
 
-/* BUTTONS */
-.btn-add { font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; padding:7px 18px; border:1.5px dashed var(--gray-400); border-radius:4px; background:transparent; color:var(--gray-600); cursor:pointer; margin-top:10px; transition:all 0.15s; }
+/* ── ACCOUNT PRIORITY ── */
+.priority-legend {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px;
+}
+.legend-item {
+  background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius);
+  padding:14px 16px;
+}
+.legend-num {
+  font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em;
+  color:var(--gray-400); margin-bottom:4px;
+}
+.legend-name { font-size:13px; font-weight:600; color:var(--ink); margin-bottom:4px; }
+.legend-desc { font-size:12px; color:var(--gray-600); line-height:1.5; }
+
+.locked-row {
+  display:flex; align-items:center; gap:10px; padding:10px 13px; margin-bottom:6px;
+  border:1.5px solid var(--gray-200); border-radius:var(--radius); background:var(--gray-50); opacity:0.6;
+}
+.ppill {
+  font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+  padding:3px 10px; border-radius:100px; flex-shrink:0;
+  background:var(--gray-100); color:var(--gray-600); border:1px solid var(--gray-200);
+}
+.ppill.p1-fixed { background:var(--pink-soft); color:var(--pink-deep); border-color:rgba(255,56,92,0.25); }
+.ppill.p2-active { background:var(--ink); color:#fff; border-color:var(--ink); }
+
+/* ── BUTTONS ── */
+.btn-add {
+  font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600;
+  padding:7px 16px; border:1.5px dashed var(--gray-300); border-radius:var(--radius);
+  background:transparent; color:var(--gray-600); cursor:pointer; margin-top:10px; transition:all 0.15s;
+}
 .btn-add:hover { border-color:var(--pink); border-style:solid; color:var(--pink); background:var(--pink-soft); }
-.btn-rm { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:4px 10px; border:1.5px solid var(--gray-200); border-radius:4px; background:transparent; color:var(--gray-400); cursor:pointer; transition:all 0.15s; flex-shrink:0; }
+.btn-rm {
+  font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.05em; padding:4px 9px; border:1.5px solid var(--gray-200); border-radius:var(--radius);
+  background:transparent; color:var(--gray-400); cursor:pointer; transition:all 0.15s; flex-shrink:0;
+}
 .btn-rm:hover { border-color:var(--red); color:var(--red); background:var(--red-bg); }
-.btn-primary { font-family:'DM Sans',sans-serif; font-size:15px; font-weight:700; padding:16px 40px; border:none; border-radius:4px; background:var(--pink); color:#fff; cursor:pointer; width:100%; margin-top:12px; transition:all 0.2s; }
-.btn-primary:hover { background:var(--pink-deep); box-shadow:0 8px 24px rgba(255,56,92,0.28); transform:translateY(-1px); }
-.btn-primary:active { transform:translateY(0); box-shadow:none; }
+.btn-generate {
+  font-family:'DM Sans',sans-serif; font-size:16px; font-weight:700;
+  padding:18px 40px; border:none; border-radius:var(--radius);
+  background:var(--pink); color:#fff; cursor:pointer; width:100%;
+  margin-top:16px; transition:all 0.2s; letter-spacing:-0.01em;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+}
+.btn-generate:hover { background:var(--pink-deep); box-shadow:0 8px 28px rgba(255,56,92,0.3); transform:translateY(-1px); }
+.btn-generate:active { transform:translateY(0); box-shadow:none; }
+.btn-next {
+  font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600;
+  padding:10px 22px; border:1.5px solid var(--gray-300); border-radius:var(--radius);
+  background:transparent; color:var(--ink); cursor:pointer; margin-top:14px; transition:all 0.15s;
+  display:inline-flex; align-items:center; gap:8px;
+}
+.btn-next:hover { border-color:var(--pink); color:var(--pink); }
 
-/* PRIORITY PILL */
-.ppill { font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:3px 10px; border-radius:100px; flex-shrink:0; background:var(--gray-100); color:var(--gray-600); border:1px solid var(--gray-200); }
-.ppill.fixed { background:var(--pink-soft); color:var(--pink-deep); border-color:rgba(255,56,92,0.25); }
-.ppill.p2 { background:var(--ink); color:#fff; border-color:var(--ink); }
-.locked { display:flex; align-items:center; gap:10px; padding:10px 14px; margin-bottom:6px; border:1.5px solid var(--gray-200); border-radius:4px; background:var(--gray-50); opacity:0.6; }
+/* ── PLAN OUTPUT ── */
+.plan-section { padding:80px 40px; background:var(--cream); }
+.plan-inner { max-width:960px; margin:0 auto; }
 
-/* RESULTS */
-.mstrip { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); margin-bottom:28px; border:1px solid var(--gray-200); border-radius:4px; overflow:hidden; background:var(--white); }
-.mcell { padding:22px 24px; border-right:1px solid var(--gray-200); }
-.mcell:last-child { border-right:none; }
-.mlbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--gray-400); margin-bottom:8px; }
-.mval { font-family:'Fraunces',serif; font-size:28px; font-weight:500; color:var(--ink); line-height:1; letter-spacing:-0.02em; }
-.msub { font-size:12px; color:var(--gray-400); margin-top:4px; }
-.mcell.mpink .mval { color:var(--pink); }
-.mcell.mgreen .mval { color:var(--green); }
+.plan-gate {
+  text-align:center; padding:64px 40px;
+  background:var(--white); border:2px dashed var(--gray-200); border-radius:var(--radius-lg);
+}
+.plan-gate p { font-size:15px; color:var(--gray-600); margin-bottom:20px; }
 
-.pcgrid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
-.pcblock { background:var(--white); border:1px solid var(--gray-200); border-top:3px solid var(--ink); border-radius:4px; padding:28px 30px; }
-.pcblock.isA { border-top-color:var(--pink); }
-.pchead { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid var(--gray-100); }
-.pcwho { font-family:'Fraunces',serif; font-size:19px; font-weight:500; color:var(--ink); }
-.pcpc { font-size:11px; color:var(--gray-400); font-weight:600; margin-top:2px; }
-.pcgross { font-family:'Fraunces',serif; font-size:22px; color:var(--ink); text-align:right; }
-.pcgross-lbl { font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--gray-400); font-weight:700; text-align:right; margin-bottom:2px; }
+/* Plan summary strip */
+.plan-strip {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  margin-bottom:32px; background:var(--ink); border-radius:var(--radius-lg); overflow:hidden;
+}
+.strip-cell { padding:22px 24px; border-right:1px solid rgba(255,255,255,0.07); }
+.strip-cell:last-child { border-right:none; }
+.strip-lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:rgba(255,255,255,0.45); margin-bottom:8px; }
+.strip-val { font-family:'Fraunces',serif; font-size:26px; font-weight:500; color:#fff; line-height:1; letter-spacing:-0.02em; }
+.strip-sub { font-size:12px; color:rgba(255,255,255,0.4); margin-top:4px; }
+.strip-cell.is-pink .strip-val { color:var(--pink); }
+.strip-cell.is-green .strip-val { color:#5FCC6A; }
 
-.pcs { display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-radius:4px; margin-bottom:4px; font-size:13px; }
-.pcs-keep { background:var(--green-bg); }
-.pcs-xfer { background:var(--pink-soft); }
-.pcs-sur { background:var(--gray-50); border:1px solid var(--gray-200); }
-.pcs-none { background:var(--gray-50); }
-.pcslbl { font-weight:600; }
-.pcs-keep .pcslbl { color:var(--green); }
-.pcs-xfer .pcslbl { color:var(--pink-deep); }
-.pcs-sur .pcslbl { color:var(--gray-600); }
-.pcs-none .pcslbl { color:var(--gray-400); }
-.pcsamt { font-weight:700; font-size:14px; }
-.pcs-keep .pcsamt { color:var(--green); }
-.pcs-xfer .pcsamt { color:var(--pink); }
-.pcs-sur .pcsamt { color:var(--gray-600); }
-.pcs-none .pcsamt { color:var(--gray-400); }
+/* Paycheck blocks */
+.pc-pair { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.pc-block {
+  background:var(--white); border:1px solid var(--gray-200);
+  border-top:4px solid var(--ink); border-radius:var(--radius-lg); overflow:hidden;
+}
+.pc-block.is-a { border-top-color:var(--pink); }
+.pc-head {
+  display:flex; justify-content:space-between; align-items:flex-start;
+  padding:20px 24px 16px; border-bottom:1px solid var(--gray-100);
+}
+.pc-who { font-family:'Fraunces',serif; font-size:18px; font-weight:500; color:var(--ink); }
+.pc-paycheck-label { font-size:11px; color:var(--gray-400); font-weight:600; margin-top:2px; text-transform:uppercase; letter-spacing:0.06em; }
+.pc-gross-wrap { text-align:right; }
+.pc-gross-lbl { font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--gray-400); font-weight:700; margin-bottom:2px; }
+.pc-gross { font-family:'Fraunces',serif; font-size:22px; color:var(--ink); }
+.pc-steps { padding:12px 16px 16px; }
+.pc-step {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:9px 12px; border-radius:var(--radius); margin-bottom:5px;
+}
+.pc-step:last-child { margin-bottom:0; }
+.pc-step-keep { background:var(--green-bg); }
+.pc-step-xfer { background:var(--pink-soft); }
+.pc-step-surplus { background:var(--gray-50); border:1px solid var(--gray-200); }
+.pc-step-none { background:var(--gray-50); }
 
-.wbox,.ebox { display:flex; gap:12px; align-items:flex-start; border-radius:0 4px 4px 0; padding:12px 16px; font-size:13px; margin-bottom:10px; }
-.wbox { background:var(--amber-bg); border:1px solid rgba(180,83,9,0.2); border-left:4px solid var(--amber); color:var(--amber); }
-.ebox { background:var(--red-bg); border:1px solid rgba(204,51,0,0.2); border-left:4px solid var(--red); color:var(--red); }
+.step-action { display:flex; align-items:center; gap:8px; }
+.step-verb {
+  font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em;
+  padding:2px 7px; border-radius:100px; flex-shrink:0;
+}
+.pc-step-keep .step-verb { background:rgba(26,122,40,0.15); color:var(--green); }
+.pc-step-xfer .step-verb { background:rgba(255,56,92,0.15); color:var(--pink-deep); }
+.pc-step-surplus .step-verb { background:var(--gray-200); color:var(--gray-600); }
+.pc-step-none .step-verb { background:var(--gray-100); color:var(--gray-400); }
 
-.scard { background:var(--white); border:1px solid var(--gray-200); border-top:3px solid var(--gray-200); border-radius:4px; padding:32px 36px; margin-top:24px; overflow-x:auto; }
-.shead { font-family:'Fraunces',serif; font-size:24px; font-weight:500; color:var(--ink); margin-bottom:6px; letter-spacing:-0.01em; }
-.ssub { font-size:13px; color:var(--gray-600); margin-bottom:24px; }
+.step-desc { font-size:13px; font-weight:500; }
+.pc-step-keep .step-desc { color:var(--green); }
+.pc-step-xfer .step-desc { color:var(--pink-deep); }
+.pc-step-surplus .step-desc { color:var(--gray-600); }
+.pc-step-none .step-desc { color:var(--gray-400); }
+.step-amt { font-weight:700; font-size:14px; flex-shrink:0; }
+.pc-step-keep .step-amt { color:var(--green); }
+.pc-step-xfer .step-amt { color:var(--pink); }
+.pc-step-surplus .step-amt { color:var(--gray-600); }
+.pc-step-none .step-amt { color:var(--gray-400); }
 
-.empty { text-align:center; padding:80px 0; color:var(--gray-400); }
-.empty h3 { font-family:'Fraunces',serif; font-size:26px; font-weight:500; color:var(--gray-600); margin-bottom:8px; }
-.empty p { font-size:14px; }
+/* Alert boxes */
+.wbox, .ebox {
+  display:flex; gap:12px; align-items:flex-start;
+  border-radius:0 var(--radius) var(--radius) 0; padding:11px 16px; font-size:13px; margin-bottom:10px;
+}
+.wbox { background:var(--amber-bg); border-left:4px solid var(--amber); color:var(--amber); }
+.ebox { background:var(--red-bg); border-left:4px solid var(--red); color:var(--red); }
 
-footer { background:var(--ink); color:rgba(255,255,255,0.4); padding:28px 40px; text-align:center; font-size:12px; border-top:3px solid var(--pink); }
+/* Sankey */
+.sankey-card {
+  background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius-lg);
+  padding:32px 36px; margin-top:16px; overflow-x:auto;
+}
+.sankey-heading { font-family:'Fraunces',serif; font-size:22px; font-weight:500; color:var(--ink); margin-bottom:6px; }
+.sankey-sub { font-size:13px; color:var(--gray-600); margin-bottom:24px; }
+
+/* ── FOOTER ── */
+footer {
+  background:var(--ink); color:rgba(255,255,255,0.4);
+  padding:28px 40px; text-align:center; font-size:12px;
+  border-top:3px solid var(--pink);
+}
 footer strong { color:rgba(255,255,255,0.65); }
+
+/* ── UTILITIES ── */
+.mt-4 { margin-top:16px; }
+.mt-6 { margin-top:24px; }
+.hidden { display:none !important; }
+.plan-revealed { animation:fadeInUp 0.4s ease both; }
+@keyframes fadeInUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+
+.paycheck-actions { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+.paycheck-actions .btn-add, .paycheck-actions .btn-rm { margin-top:0; }
+.income-total-card {
+  display:flex; justify-content:space-between; align-items:center;
+  background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius-lg);
+  padding:14px 18px; margin-top:16px;
+}
+.income-total-card .itl { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--gray-400); }
+.income-total-card .itv { font-family:'Fraunces',serif; font-size:24px; color:var(--ink); }
+
+@media (max-width: 900px) {
+  .preview-card, .pgrid, .pc-pair, .priority-legend { grid-template-columns:1fr; }
+  .step-flow { display:grid; grid-template-columns:1fr; }
+  .step-tab { border-right:none; border-bottom:1px solid var(--gray-200); }
+  .step-tab:last-child { border-bottom:none; }
+}
+
+@media (max-width: 640px) {
+  .nav, .hero, .preview-section, .builder-section, .plan-section, footer { padding-left:18px; padding-right:18px; }
+  .nav { height:auto; min-height:60px; gap:10px; padding-top:12px; padding-bottom:12px; align-items:flex-start; flex-wrap:wrap; }
+  .nav-logo { width:100%; }
+  .nav-badge { display:none; }
+  .nav-cta { padding:8px 14px; width:100%; }
+  .hero { padding-top:56px; padding-bottom:64px; }
+  .hero h1 { font-size:clamp(34px, 10vw, 52px); }
+  .hero-sub { font-size:16px; max-width:100%; }
+  .hero-actions, .paycheck-actions { flex-direction:column; }
+  .btn-hero-primary, .btn-hero-secondary, .btn-generate, .btn-next, .btn-add, .btn-rm { width:100%; justify-content:center; }
+  .preview-card, .card, .sankey-card { padding:22px 18px; }
+  .builder-intro, .card-header { margin-bottom:20px; }
+  .frow { flex-direction:column; align-items:stretch; }
+  .frow label { width:100%; }
+  input.amt, input.amt-sm, .pname-inp, select { width:100%; text-align:left; }
+  .pname-inp { max-width:none; }
+  .split-result, .income-total-card, .total-bar, .pc-head { flex-direction:column; align-items:flex-start; gap:8px; }
+  .pc-gross-wrap { text-align:left; }
+  .plan-strip { grid-template-columns:1fr 1fr; }
+  .preview-step, .pc-step { align-items:flex-start; gap:8px; }
+  .preview-step, .pc-step, .erow, .arow, .toggle-row { padding-left:10px; padding-right:10px; }
+  .step-flow { border-radius:8px; }
+  .step-tab { padding:14px 14px; }
+  .paycheck-actions .btn-add, .paycheck-actions .btn-rm { padding-top:10px; padding-bottom:10px; }
+  .income-total-card .itv, .total-bar .tv { font-size:22px; }
+  .pc-who { font-size:17px; }
+}
+
+
+@media (max-width: 420px) {
+  .hero-eyebrow, .section-eyebrow { font-size:10px; }
+  .hero h1 { font-size:32px; }
+  .section-heading { font-size:26px; }
+  .plan-strip { grid-template-columns:1fr; }
+  .preview-items li { font-size:13px; }
+  .step-num { width:22px; height:22px; font-size:10px; }
+}
 </style>
 </head>
 <body>
-
-<nav>
-  <a class="logo" href="#">
-    <div class="logo-mark">♡</div>
-    <span class="logo-name">Couple Finance Calculator</span>
-    <span class="logo-tag">Paycheck Planner</span>
-  </a>
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nav-mark">♡</div>
+    <span class="nav-name">Paycheck Planner</span>
+    <span class="nav-badge">For Couples</span>
+  </div>
+  <button class="nav-cta" onclick="scrollToBuilder()">Build My Plan</button>
 </nav>
 
-<div class="hero">
+<section class="hero">
   <div class="hero-inner">
-    <span class="eyebrow">Financial planning for two</span>
-    <h1>Couple Finance <em>Calculator</em></h1>
-    <p>Clear, actionable transfer instructions every paycheck — built around your income, your expenses, and your priorities.</p>
+    <span class="hero-eyebrow">A simple paycheck planner for couples</span>
+    <h1>Know exactly what to do<br>with <em>every paycheck.</em></h1>
+    <p class="hero-sub">Get a clear monthly plan for what to do with every paycheck — across shared bills, savings, and personal spending.</p>
+    <div class="hero-actions">
+      <button class="btn-hero-primary" onclick="loadSample(); scrollToBuilder();">Try with Sample Data</button>
+      <button class="btn-hero-secondary" onclick="scrollToBuilder()">Build My Plan</button>
+    </div>
   </div>
-</div>
+</section>
 
-<div class="main">
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="showTab('inputs')">Income &amp; Expenses</button>
-    <button class="tab-btn" onclick="showTab('accounts')">Accounts &amp; Priority</button>
-    <button class="tab-btn" onclick="showTab('results')">Action Plan</button>
-  </div>
-
-  <!-- TAB 1 -->
-  <div id="tab-inputs" class="tab-pane active">
-
-    <div class="card accent">
-      <div class="card-lbl">Monthly income</div>
-      <div class="pgrid">
-        <div>
-          <div class="phead">
-            <div class="pdot pdot-a"></div>
-            <div class="phead-text">
-              <div class="plabel">Person A</div>
-              <input class="pname-inp" id="name_a" type="text" placeholder="Enter name" value="Person A" oninput="updateSplit()">
-            </div>
-          </div>
-          <div class="frow"><label>Paycheck 1</label><input class="amt" id="a_p1" type="number" value="2600" min="0"></div>
-          <div class="frow"><label>Paycheck 2</label><input class="amt" id="a_p2" type="number" value="2600" min="0"></div>
-          <div class="frow"><label>Bonus (added to P2)</label><input class="amt" id="a_bonus" type="number" value="0" min="0" placeholder="0"></div>
+<section class="preview-section">
+  <div class="section-inner">
+    <span class="section-eyebrow">What you'll get</span>
+    <h2 class="section-heading">A clear plan you can follow without<br>rethinking everything every month.</h2>
+    <div class="preview-card">
+      <div>
+        <span class="preview-label">Example monthly plan</span>
+        <div class="preview-block">
+          <div class="preview-block-head"><div class="preview-dot pd-a"></div>Emma — Paycheck 1</div>
+          <div class="preview-step ps-keep"><span class="ps-label">Keep for personal spending</span><span class="ps-amt">$800</span></div>
+          <div class="preview-step ps-xfer"><span class="ps-label">→ Transfer to Shared Expense Account</span><span class="ps-amt">$1,700</span></div>
         </div>
-        <div>
-          <div class="phead">
-            <div class="pdot pdot-b"></div>
-            <div class="phead-text">
-              <div class="plabel">Person B</div>
-              <input class="pname-inp" id="name_b" type="text" placeholder="Enter name" value="Person B" oninput="updateSplit()">
-            </div>
-          </div>
-          <div class="frow"><label>Paycheck 1</label><input class="amt" id="b_p1" type="number" value="3000" min="0"></div>
-          <div class="frow"><label>Paycheck 2</label><input class="amt" id="b_p2" type="number" value="3000" min="0"></div>
-          <div class="frow"><label>Bonus (added to P2)</label><input class="amt" id="b_bonus" type="number" value="0" min="0" placeholder="0"></div>
+        <div class="preview-block">
+          <div class="preview-block-head"><div class="preview-dot pd-b"></div>James — Paycheck 1</div>
+          <div class="preview-step ps-keep"><span class="ps-label">Keep for personal spending</span><span class="ps-amt">$1,200</span></div>
+          <div class="preview-step ps-xfer"><span class="ps-label">→ Transfer to Shared Expense Account</span><span class="ps-amt">$1,800</span></div>
+        </div>
+        <div class="preview-block">
+          <div class="preview-block-head"><div class="preview-dot pd-b"></div>James — Paycheck 2</div>
+          <div class="preview-step ps-xfer"><span class="ps-label">→ Transfer to Shared Buffer</span><span class="ps-amt">$500</span></div>
+          <div class="preview-step ps-xfer"><span class="ps-label">→ Transfer to Joint Savings</span><span class="ps-amt">$1,500</span></div>
         </div>
       </div>
-    </div>
-
-    <div class="card">
-      <div class="card-lbl">Shared monthly expenses</div>
-      <div id="elist"></div>
-      <button class="btn-add" onclick="addExp()">+ Add category</button>
-      <div class="trow" style="margin-top:16px;">
-        <input type="checkbox" id="ov-toggle" onchange="toggleOv()">
-        <label for="ov-toggle">Override total manually</label>
-        <input class="amt-sm" id="ov-val" type="number" placeholder="amount" style="display:none;" oninput="updateExpTotal()">
-      </div>
-      <div class="tbar">
-        <span class="tl">Monthly shared expense target</span>
-        <span class="tv" id="exp-total">$0</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-lbl">Personal spend</div>
-      <div class="frow" style="margin-bottom:14px;"><label>Total household personal spend</label><input class="amt" id="ptotal" type="number" value="2000" min="0" oninput="updateSplit()"></div>
-      <div class="frow" style="margin-bottom:10px;">
-        <label id="slabel" style="color:var(--pink); font-weight:600;">Person A's share</label>
-        <input type="range" id="slider" min="0" max="100" value="40" step="1" oninput="updateSplit()">
-        <span class="spill" id="spill">40% / 60%</span>
-      </div>
-      <div class="sresult">
-        <span class="sa" id="sa-out">Person A keeps: $800</span>
-        <span class="sb" id="sb-out">Person B keeps: $1,200</span>
-      </div>
-      <div class="frow" style="margin-top:16px;">
-        <label>Deduct personal spend from</label>
-        <select id="pmode" style="width:auto;flex-shrink:0;">
-          <option value="p1">Paycheck 1 only (default)</option>
-          <option value="split">Split evenly across both paychecks</option>
-        </select>
-      </div>
-    </div>
-
-    <button class="btn-primary" onclick="calculate()">Calculate action plan →</button>
-  </div>
-
-  <!-- TAB 2 -->
-  <div id="tab-accounts" class="tab-pane">
-    <div class="card">
-      <div class="card-lbl">Funding priority order</div>
-      <p style="font-size:13px;color:var(--gray-600);margin-bottom:20px;">Shared expenses are always funded first. Drag all other accounts — including the sinking fund — to reorder. The account in Position 2 gets the optional partial-fund toggle.</p>
-      <div class="locked">
-        <span style="flex:1;font-size:14px;font-weight:600;">Shared expense account</span>
-        <span class="ppill fixed">Priority 1 · fixed</span>
-      </div>
-      <div id="alist"></div>
-      <button class="btn-add" onclick="addAcct()">+ Add savings account</button>
-    </div>
-    <button class="btn-primary" onclick="calculate()">Calculate action plan →</button>
-  </div>
-
-  <!-- TAB 3 -->
-  <div id="tab-results" class="tab-pane">
-    <div id="results">
-      <div class="empty">
-        <div style="font-size:42px;margin-bottom:16px;">📋</div>
-        <h3>No plan yet</h3>
-        <p>Fill in your income and expenses, then click "Calculate action plan".</p>
+      <div class="preview-right">
+        <h3>Your plan, ready in under 2 minutes.</h3>
+        <p>Enter your paychecks, your shared expenses, and where you want your money to go. We handle the math and give you a step-by-step transfer guide you can actually follow.</p>
+        <ul class="preview-items">
+          <li>A step-by-step plan for every paycheck</li>
+          <li>Shared bills covered first</li>
+          <li>Built-in room for extra shared costs</li>
+          <li>Flexible priorities for savings goals</li>
+          <li>Works with different pay schedules</li>
+        </ul>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<footer><strong>Couple Finance Calculator</strong> · All calculations run locally — no data is stored or sent anywhere.</footer>
+<div class="section-divider"></div>
+
+<section class="builder-section" id="builder">
+  <div class="builder-inner">
+    <div class="builder-intro">
+      <span class="section-eyebrow">Build your plan</span>
+      <h2 class="section-heading" style="margin-bottom:8px;">Your monthly transfer plan starts here.</h2>
+      <p style="font-size:15px; color:var(--gray-600); max-width:560px; line-height:1.65;">Move step by step, then generate a final monthly plan you can follow each time you get paid.</p>
+    </div>
+
+    <div class="step-flow">
+      <button class="step-tab active" id="stab-0" onclick="showStep(0)"><span class="step-num">1</span><span>Paychecks</span></button>
+      <button class="step-tab" id="stab-1" onclick="showStep(1)"><span class="step-num">2</span><span>Shared Expenses</span></button>
+      <button class="step-tab" id="stab-2" onclick="showStep(2)"><span class="step-num">3</span><span>Where Money Goes First</span></button>
+      <button class="step-tab" id="stab-3" onclick="showStep(3)"><span class="step-num">4</span><span>Personal Spending</span></button>
+      <button class="step-tab" id="stab-4" onclick="showStep(4)"><span class="step-num">5</span><span>Generate Plan</span></button>
+    </div>
+
+    <div class="step-pane active" id="spane-0">
+      <div class="card pink-top">
+        <div class="card-header">
+          <div class="card-title">Your paychecks</div>
+          <div class="card-desc">Add each person's take-home paychecks for this month. Start with two paychecks each, and add or remove as needed.</div>
+        </div>
+        <div class="pgrid">
+          <div>
+            <div class="pcol-head"><div class="pdot pdot-a"></div><div class="pcol-meta"><div class="plabel">Person A</div><input class="pname-inp" id="name_a" type="text" placeholder="Your name" value="Emma" oninput="updateSplit()"></div></div>
+            <div id="paychecks_a"></div>
+            <div class="paycheck-actions">
+              <button class="btn-add" onclick="addPaycheck('a')">+ Add paycheck</button>
+              <button class="btn-rm" onclick="removePaycheck('a')">Remove last paycheck</button>
+            </div>
+          </div>
+          <div>
+            <div class="pcol-head"><div class="pdot pdot-b"></div><div class="pcol-meta"><div class="plabel">Person B</div><input class="pname-inp" id="name_b" type="text" placeholder="Partner's name" value="James" oninput="updateSplit()"></div></div>
+            <div id="paychecks_b"></div>
+            <div class="paycheck-actions">
+              <button class="btn-add" onclick="addPaycheck('b')">+ Add paycheck</button>
+              <button class="btn-rm" onclick="removePaycheck('b')">Remove last paycheck</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:space-between; gap:12px;">
+        <span></span>
+        <button class="btn-next" onclick="showStep(1)">Next: Shared Expenses →</button>
+      </div>
+    </div>
+
+    <div class="step-pane" id="spane-1">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Monthly shared expenses</div>
+          <div class="card-desc">Everything you both pay together — rent, utilities, insurance, groceries. This gets funded before anything else.</div>
+        </div>
+        <div id="elist"></div>
+        <button class="btn-add" onclick="addExp()">+ Add expense</button>
+        <div class="toggle-row mt-4">
+          <input type="checkbox" id="ov-toggle" onchange="toggleOv()">
+          <label for="ov-toggle">Override the calculated total with a custom amount</label>
+          <input class="amt-sm" id="ov-val" type="number" step="100" placeholder="amount" style="display:none;" oninput="updateExpTotal()">
+        </div>
+        <div class="total-bar"><span class="tl">Total shared expenses this month</span><span class="tv" id="exp-total">$0</span></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; gap:12px;">
+        <button class="btn-next" onclick="showStep(0)">← Back</button>
+        <button class="btn-next" onclick="showStep(2)">Next: Where money goes first →</button>
+      </div>
+    </div>
+
+    <div class="step-pane" id="spane-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Where your money goes first</div>
+          <div class="card-desc">After shared expenses are covered, decide where the rest of your money should go next. Drag to reorder. The first custom account can be partially funded by default, and the last account can optionally collect all remaining money.</div>
+        </div>
+        <div class="priority-legend">
+          <div class="legend-item" style="border-top:3px solid var(--pink);"><div class="legend-num">Always first</div><div class="legend-name">Shared expense account</div><div class="legend-desc">Your joint account for monthly bills. Funded before anything else.</div></div>
+          <div class="legend-item" style="border-top:3px solid var(--ink);"><div class="legend-num">Next priority</div><div class="legend-name">Shared buffer fund (recommended)</div><div class="legend-desc">Set money aside for non-monthly shared costs like travel, repairs, taxes, or annual bills. You can rename this later.</div></div>
+          <div class="legend-item"><div class="legend-num">Then everything else</div><div class="legend-name">Savings & investments</div><div class="legend-desc">Emergency fund, joint savings, investment accounts — in the order you set.</div></div>
+        </div>
+        <div class="locked-row"><span class="dh" style="cursor:default;">⠿</span><span style="flex:1;font-size:14px;font-weight:600;">Shared expense account</span><span class="ppill p1-fixed">Priority 1 · always first</span></div>
+        <div id="alist"></div>
+        <button class="btn-add" onclick="addAcct()">+ Add savings account</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; gap:12px;">
+        <button class="btn-next" onclick="showStep(1)">← Back</button>
+        <button class="btn-next" onclick="showStep(3)">Next: Personal spending →</button>
+      </div>
+    </div>
+
+    <div class="step-pane" id="spane-3">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Personal spending</div>
+          <div class="card-desc">This is money each of you keeps for yourselves each month, so shared money and personal money stay clear.</div>
+        </div>
+        <div class="frow" style="margin-bottom:14px;"><label>Combined monthly personal spending</label><input class="amt" id="ptotal" type="number" step="100" value="2000" min="0" oninput="updateSplit()"></div>
+        <div class="frow" style="margin-bottom:10px;"><label id="slabel" style="color:var(--pink);font-weight:600;">Emma's share</label><input type="range" id="slider" min="0" max="100" value="40" step="1" oninput="updateSplit()"><span class="split-pill" id="spill">40% / 60%</span></div>
+        <div class="split-result"><span class="split-a" id="sa-out">Emma keeps: $800</span><span class="split-b" id="sb-out">James keeps: $1,200</span></div>
+        <div class="frow mt-4"><label>When to deduct personal spending</label><select id="pmode" style="width:auto;flex-shrink:0;"><option value="p1">From first paycheck only (default)</option><option value="split">Split evenly across all paychecks</option></select></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; gap:12px;">
+        <button class="btn-next" onclick="showStep(2)">← Back</button>
+        <button class="btn-next" onclick="showStep(4)">Next: Review & generate →</button>
+      </div>
+    </div>
+
+    <div class="step-pane" id="spane-4">
+      <div class="card pink-top">
+        <div class="card-header">
+          <div class="card-title">Ready to generate your plan</div>
+          <div class="card-desc">Review your setup, then generate a clear month-by-month plan you can actually follow when each paycheck arrives.</div>
+        </div>
+        <div class="split-result" style="margin-bottom:16px;"><span class="split-a">Shared expenses target: <strong id="review-exp">$0</strong></span><span class="split-b">Personal spending: <strong id="review-personal">$0</strong></span></div>
+        <button class="btn-generate" onclick="generate()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Generate My Monthly Plan</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; gap:12px;">
+        <button class="btn-next" onclick="showStep(3)">← Back</button>
+        <span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="plan-section hidden" id="plan-section">
+  <div class="plan-inner">
+    <div id="plan-output"></div>
+  </div>
+</section>
+
+<footer>
+  <strong>Paycheck Planner</strong> · A simple shared money planning tool for couples · All calculations run locally — no data is stored or sent anywhere.
+</footer>
 
 <script>
-let expenses=[{id:1,name:'Rent',amount:1800},{id:2,name:'Car loan',amount:400},{id:3,name:'Car insurance',amount:120},{id:4,name:'Electricity',amount:100},{id:5,name:'Groceries',amount:600},{id:6,name:'Restaurants',amount:300}];
-let expId=7;
-let accounts=[{id:1,name:'Sinking fund',target:500,partial:false},{id:2,name:'Emergency fund',target:300,partial:false},{id:3,name:'Joint savings',target:500,partial:false}];
-let acctId=4;
-let dSrc=null,dKind=null;
+let expenses = [
+  {id:1,name:'Rent',amount:1800},{id:2,name:'Car loan',amount:400},
+  {id:3,name:'Car insurance',amount:120},{id:4,name:'Electricity',amount:100},
+  {id:5,name:'Groceries',amount:600},{id:6,name:'Restaurants',amount:300},
+];
+let expId = 7;
+let accounts = [
+  {id:1,name:'Shared buffer fund',target:500,partial:true,sweep:false},
+  {id:2,name:'Emergency fund',target:300,partial:false,sweep:false},
+  {id:3,name:'Joint savings',target:500,partial:false,sweep:true},
+];
+let acctId = 4;
+let dSrc = null, dKind = null;
+let paycheckId = 10;
+let paychecks = {
+  a: [{id:1, amount:2500},{id:2, amount:2500}],
+  b: [{id:3, amount:3000},{id:4, amount:3000}],
+};
+const fmt = n => '$' + Math.round(Number(n||0)).toLocaleString();
+const nA = () => document.getElementById('name_a').value.trim() || 'Emma';
+const nB = () => document.getElementById('name_b').value.trim() || 'James';
+const esc = s => (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 
-const fmt=n=>'$'+Math.round(n).toLocaleString();
-const nA=()=>document.getElementById('name_a').value.trim()||'Person A';
-const nB=()=>document.getElementById('name_b').value.trim()||'Person B';
-const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+function scrollToBuilder(){ document.getElementById('builder').scrollIntoView({behavior:'smooth', block:'start'}); }
+function scrollToPlan(){ document.getElementById('plan-section').scrollIntoView({behavior:'smooth', block:'start'}); }
+
+function showStep(n){
+  [0,1,2,3,4].forEach(i=>{
+    document.getElementById('spane-'+i).classList.toggle('active', i===n);
+    document.getElementById('stab-'+i).classList.toggle('active', i===n);
+  });
+  if(n===4) updateReview();
+}
+
+function renderPaychecks(person){
+  const el = document.getElementById('paychecks_'+person);
+  el.innerHTML='';
+  paychecks[person].forEach((p, idx)=>{
+    const row = document.createElement('div');
+    row.className='frow';
+    row.innerHTML = `<label>Paycheck ${idx+1}</label><input class="amt" type="number" step="100" min="0" value="${p.amount}" oninput="updatePaycheck('${person}', ${idx}, this.value)">`;
+    el.appendChild(row);
+  });
+}
+function updatePaycheck(person, idx, value){ paychecks[person][idx].amount = Number(value||0); }
+function addPaycheck(person){ paychecks[person].push({id:paycheckId++, amount: person==='a'?2500:3000}); renderPaychecks(person); }
+function removePaycheck(person){ if(paychecks[person].length>1){ paychecks[person].pop(); renderPaychecks(person); } }
 
 function renderExp(){
-  const el=document.getElementById('elist');
-  el.innerHTML='';
+  const el=document.getElementById('elist'); el.innerHTML='';
   expenses.forEach((e,i)=>{
-    const r=document.createElement('div');
-    r.className='erow'; r.draggable=true; r.dataset.i=i;
-    r.innerHTML=`<span class="dh">⠿</span>
-      <input type="text" class="ninp" value="${esc(e.name)}" placeholder="Category name" data-f="name" data-i="${i}">
-      <input type="number" class="amt-sm" value="${e.amount}" min="0" placeholder="0" data-f="amount" data-i="${i}" style="width:110px;">
-      <button class="btn-rm" onclick="rmExp(${i})">Remove</button>`;
-    r.addEventListener('dragstart',ev=>{dSrc=i;dKind='exp';r.classList.add('dragging');ev.dataTransfer.effectAllowed='move';});
+    const r=document.createElement('div'); r.className='erow'; r.draggable=true; r.dataset.i=i;
+    r.innerHTML=`<span class="dh">⠿</span><input type="text" class="ninp" value="${esc(e.name)}" placeholder="Expense name" data-f="name" data-i="${i}"><input type="number" step="100" class="amt-sm" value="${e.amount}" min="0" placeholder="0" data-f="amount" data-i="${i}" style="width:108px;"><button class="btn-rm" onclick="rmExp(${i})">Remove</button>`;
+    r.addEventListener('dragstart',ev=>{dSrc=i; dKind='exp'; r.classList.add('dragging'); ev.dataTransfer.effectAllowed='move';});
     r.addEventListener('dragend',()=>r.classList.remove('dragging'));
-    r.addEventListener('dragover',ev=>{ev.preventDefault();r.classList.add('drag-over');});
+    r.addEventListener('dragover',ev=>{ev.preventDefault(); r.classList.add('drag-over');});
     r.addEventListener('dragleave',()=>r.classList.remove('drag-over'));
-    r.addEventListener('drop',ev=>{
-      ev.preventDefault();r.classList.remove('drag-over');
-      if(dKind!=='exp'||dSrc===null||dSrc===+r.dataset.i)return;
-      const m=expenses.splice(dSrc,1)[0];expenses.splice(+r.dataset.i,0,m);
-      renderExp();updateExpTotal();
-    });
-    r.querySelectorAll('input[data-f]').forEach(inp=>{
-      inp.addEventListener('input',()=>{
-        const idx=+inp.dataset.i,f=inp.dataset.f;
-        expenses[idx][f]=f==='amount'?Number(inp.value||0):inp.value;
-        if(f==='amount')updateExpTotal();
-      });
-    });
+    r.addEventListener('drop',ev=>{ev.preventDefault(); r.classList.remove('drag-over'); if(dKind!=='exp'||dSrc===null||dSrc===+r.dataset.i) return; expenses.splice(+r.dataset.i,0,expenses.splice(dSrc,1)[0]); renderExp(); updateExpTotal();});
+    r.querySelectorAll('input[data-f]').forEach(inp=>inp.addEventListener('input',()=>{const idx=+inp.dataset.i, f=inp.dataset.f; expenses[idx][f]=f==='amount'?Number(inp.value||0):inp.value; if(f==='amount') updateExpTotal();}));
     el.appendChild(r);
   });
   updateExpTotal();
 }
-function addExp(){expenses.push({id:expId++,name:'',amount:0});renderExp();document.querySelectorAll('#elist .ninp')[expenses.length-1]?.focus();}
-function rmExp(i){expenses.splice(i,1);renderExp();}
-function getExpT(){
-  if(document.getElementById('ov-toggle').checked){const v=Number(document.getElementById('ov-val').value);if(v)return v;}
-  return expenses.reduce((s,e)=>s+Number(e.amount||0),0);
-}
-function updateExpTotal(){document.getElementById('exp-total').textContent=fmt(getExpT());}
-function toggleOv(){const s=document.getElementById('ov-toggle').checked;document.getElementById('ov-val').style.display=s?'inline-block':'none';updateExpTotal();}
+function addExp(){ expenses.push({id:expId++, name:'', amount:0}); renderExp(); }
+function rmExp(i){ expenses.splice(i,1); renderExp(); }
+function getExpT(){ if(document.getElementById('ov-toggle').checked){ const v=Number(document.getElementById('ov-val').value); if(v) return v; } return expenses.reduce((s,e)=>s+Number(e.amount||0),0); }
+function updateExpTotal(){ document.getElementById('exp-total').textContent = fmt(getExpT()); }
+function toggleOv(){ document.getElementById('ov-val').style.display = document.getElementById('ov-toggle').checked ? 'inline-block' : 'none'; updateExpTotal(); }
 
 function updateSplit(){
-  const total=Number(document.getElementById('ptotal').value)||0;
-  const pct=Number(document.getElementById('slider').value);
-  const a=Math.round(total*pct/100),b=total-a;
-  document.getElementById('spill').textContent=pct+'% / '+(100-pct)+'%';
-  document.getElementById('slabel').textContent=(nA()+"'s share");
-  document.getElementById('sa-out').textContent=nA()+' keeps: '+fmt(a);
-  document.getElementById('sb-out').textContent=nB()+' keeps: '+fmt(b);
+  const total=Number(document.getElementById('ptotal').value)||0; const pct=Number(document.getElementById('slider').value); const a=Math.round(total*pct/100), b=total-a;
+  document.getElementById('spill').textContent = pct+'% / '+(100-pct)+'%';
+  document.getElementById('slabel').textContent = nA()+"'s share";
+  document.getElementById('sa-out').textContent = nA()+' keeps: '+fmt(a);
+  document.getElementById('sb-out').textContent = nB()+' keeps: '+fmt(b);
 }
 
 function renderAccts(){
-  const el=document.getElementById('alist');
-  el.innerHTML='';
+  const el=document.getElementById('alist'); el.innerHTML='';
   accounts.forEach((ac,i)=>{
-    const pri=i+2,isP2=i===0;
-    const r=document.createElement('div');
-    r.className='arow'; r.style.flexWrap='wrap'; r.draggable=true; r.dataset.i=i;
-    r.innerHTML=`<span class="dh">⠿</span>
-      <input type="text" class="ninp" value="${esc(ac.name)}" placeholder="Account name" data-f="name" data-i="${i}" style="flex:1;min-width:120px;">
-      <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--gray-400);white-space:nowrap;margin:0 6px 0 10px;">Target</label>
-      <input type="number" class="amt-sm" value="${ac.target}" min="0" data-f="target" data-i="${i}">
-      <span class="ppill ${isP2?'p2':''}">P${pri}</span>
-      <button class="btn-rm" onclick="rmAcct(${i})">Remove</button>
-      ${isP2?`<div style="width:100%;margin-top:8px;padding-top:10px;border-top:1px solid var(--gray-100);">
-        <div class="trow" style="margin:0;">
-          <input type="checkbox" id="partial_${ac.id}" ${ac.partial?'checked':''} data-ai="${i}">
-          <label for="partial_${ac.id}">Allow partial fund — contribute whatever is available if income falls short</label>
-        </div>
-        <div class="tnote ${ac.partial?'show':''}" id="pnote_${i}">When enabled: remaining income funds this account partially rather than skipping it entirely.</div>
-      </div>`:''}`;
-    r.addEventListener('dragstart',ev=>{dSrc=i;dKind='acct';ev.dataTransfer.effectAllowed='move';});
-    r.addEventListener('dragover',ev=>{ev.preventDefault();r.classList.add('drag-over');});
+    const pri=i+2, isP2=i===0; const r=document.createElement('div'); r.className='arow'; r.style.flexWrap='wrap'; r.draggable=true; r.dataset.i=i;
+    const isLast = i===accounts.length-1;
+    const showTarget = !(isLast && ac.sweep);
+    r.innerHTML=`<span class="dh">⠿</span><input type="text" class="ninp" value="${esc(ac.name)}" placeholder="Account name" data-f="name" data-i="${i}" style="flex:1;min-width:120px;"><div style="${showTarget?'display:flex;align-items:center;gap:6px;':'display:none;'}"><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--gray-400);white-space:nowrap;margin:0 0 0 10px;">Monthly target</label><input type="number" step="100" class="amt-sm" value="${ac.target}" min="0" data-f="target" data-i="${i}"></div><span class="ppill ${isP2?'p2-active':''}">P${pri}</span><button class="btn-rm" onclick="rmAcct(${i})">Remove</button>${isP2 ? `<div style="width:100%;margin-top:8px;padding-top:10px;border-top:1px solid var(--gray-100);"><div class="toggle-row" style="margin:0;"><input type="checkbox" id="partial_${ac.id}" ${ac.partial?'checked':''} data-ai="${i}"><label for="partial_${ac.id}">Allow partial fund — if income is short, contribute whatever is left rather than skipping</label></div><div class="toggle-note ${ac.partial?'show':''}" id="pnote_${i}">When enabled, this account can still receive money even if it does not reach its full target.</div></div>`:''}${isLast ? `<div style="width:100%;margin-top:8px;padding-top:10px;border-top:1px solid var(--gray-100);"><div class="toggle-row" style="margin:0;"><input type="checkbox" id="sweep_${ac.id}" ${ac.sweep?'checked':''} data-ai="${i}"><label for="sweep_${ac.id}">Send all remaining money to this account</label></div><div class="toggle-note ${ac.sweep?'show':''}" id="snote_${i}">When enabled, any money left after higher-priority accounts are funded will go here automatically. No monthly target is needed.</div></div>`:''}`;
+    r.addEventListener('dragstart',ev=>{dSrc=i; dKind='acct'; ev.dataTransfer.effectAllowed='move';});
+    r.addEventListener('dragover',ev=>{ev.preventDefault(); r.classList.add('drag-over');});
     r.addEventListener('dragleave',()=>r.classList.remove('drag-over'));
-    r.addEventListener('drop',ev=>{
-      ev.preventDefault();r.classList.remove('drag-over');
-      if(dKind!=='acct'||dSrc===null||dSrc===+r.dataset.i)return;
-      const m=accounts.splice(dSrc,1)[0];accounts.splice(+r.dataset.i,0,m);renderAccts();
-    });
-    r.querySelectorAll('input[data-f]').forEach(inp=>{
-      inp.addEventListener('input',()=>{
-        const idx=+inp.dataset.i,f=inp.dataset.f;
-        accounts[idx][f]=f==='target'?Number(inp.value||0):inp.value;
-      });
-    });
-    if(isP2){
-      const cb=r.querySelector(`#partial_${ac.id}`);
-      if(cb)cb.addEventListener('change',()=>{
-        const idx=+cb.dataset.ai;
-        accounts[idx].partial=cb.checked;
-        document.getElementById(`pnote_${idx}`)?.classList.toggle('show',cb.checked);
-      });
-    }
+    r.addEventListener('drop',ev=>{ev.preventDefault(); r.classList.remove('drag-over'); if(dKind!=='acct'||dSrc===null||dSrc===+r.dataset.i) return; accounts.splice(+r.dataset.i,0,accounts.splice(dSrc,1)[0]); renderAccts();});
+    r.querySelectorAll('input[data-f]').forEach(inp=>inp.addEventListener('input',()=>{const idx=+inp.dataset.i, f=inp.dataset.f; accounts[idx][f]=f==='target'?Number(inp.value||0):inp.value;}));
+    if(isP2){ const cb=r.querySelector(`#partial_${ac.id}`); if(cb) cb.addEventListener('change',()=>{const idx=+cb.dataset.ai; accounts[idx].partial=cb.checked; document.getElementById(`pnote_${idx}`)?.classList.toggle('show', cb.checked);}); }
+    if(isLast){ const sw=r.querySelector(`#sweep_${ac.id}`); if(sw) sw.addEventListener('change',()=>{const idx=+sw.dataset.ai; accounts=accounts.map((item,j)=>({...item,sweep:j===idx?sw.checked:false})); renderAccts();}); }
     el.appendChild(r);
   });
 }
-function addAcct(){accounts.push({id:acctId++,name:'',target:0,partial:false});renderAccts();document.querySelectorAll('#alist .ninp')[accounts.length-1]?.focus();}
-function rmAcct(i){accounts.splice(i,1);renderAccts();}
+function addAcct(){ accounts=accounts.map((ac,idx)=>({...ac,sweep:false})); accounts.push({id:acctId++, name:'', target:0, partial:false, sweep:true}); renderAccts(); }
+function rmAcct(i){ accounts.splice(i,1); if(accounts.length){ accounts=accounts.map((ac,idx)=>({...ac,sweep:idx===accounts.length-1?true:false})); } renderAccts(); }
 
-function showTab(t){
-  document.querySelectorAll('.tab-pane').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
-  document.getElementById('tab-'+t).classList.add('active');
-  ['inputs','accounts','results'].indexOf(t);
-  document.querySelectorAll('.tab-btn')[['inputs','accounts','results'].indexOf(t)].classList.add('active');
+function updateReview(){
+  document.getElementById('review-exp').textContent = fmt(getExpT());
+  document.getElementById('review-personal').textContent = fmt(Number(document.getElementById('ptotal').value)||0);
 }
 
-function calculate(){
-  const aN=nA(),bN=nB();
-  const aP1g=Number(document.getElementById('a_p1').value)||0;
-  const aP2g=(Number(document.getElementById('a_p2').value)||0)+(Number(document.getElementById('a_bonus').value)||0);
-  const bP1g=Number(document.getElementById('b_p1').value)||0;
-  const bP2g=(Number(document.getElementById('b_p2').value)||0)+(Number(document.getElementById('b_bonus').value)||0);
-  const totalP=Number(document.getElementById('ptotal').value)||0;
-  const pct=Number(document.getElementById('slider').value);
-  const aPer=Math.round(totalP*pct/100),bPer=totalP-aPer;
-  const mode=document.getElementById('pmode').value;
-  const expT=getExpT();
+function loadSample(){
+  document.getElementById('name_a').value='Emma'; document.getElementById('name_b').value='James';
+  paychecks = { a:[{id:1, amount:2500},{id:2, amount:2500}], b:[{id:3, amount:3000},{id:4, amount:3000}]};
+  expenses = [{id:1,name:'Rent',amount:1800},{id:2,name:'Car loan',amount:400},{id:3,name:'Car insurance',amount:120},{id:4,name:'Electricity',amount:100},{id:5,name:'Groceries',amount:600},{id:6,name:'Restaurants',amount:300}];
+  accounts = [{id:1,name:'Shared buffer fund',target:500,partial:true,sweep:false},{id:2,name:'Emergency fund',target:300,partial:false,sweep:false},{id:3,name:'Joint savings',target:500,partial:false,sweep:true}];
+  document.getElementById('ptotal').value=2000; document.getElementById('slider').value=40; document.getElementById('ov-toggle').checked=false; document.getElementById('ov-val').value=''; document.getElementById('ov-val').style.display='none';
+  renderPaychecks('a'); renderPaychecks('b'); renderExp(); renderAccts(); updateSplit(); updateReview(); showStep(0);
+}
 
-  const bks=[
-    {key:'aP1',lbl:aN+' — Paycheck 1',who:'a',gross:aP1g,rem:aP1g,keep:0,xfers:[]},
-    {key:'bP1',lbl:bN+' — Paycheck 1',who:'b',gross:bP1g,rem:bP1g,keep:0,xfers:[]},
-    {key:'aP2',lbl:aN+' — Paycheck 2',who:'a',gross:aP2g,rem:aP2g,keep:0,xfers:[]},
-    {key:'bP2',lbl:bN+' — Paycheck 2',who:'b',gross:bP2g,rem:bP2g,keep:0,xfers:[]},
-  ];
-  const [bA1,bB1,bA2,bB2]=bks;
+function generate(){
+  const aN=nA(), bN=nB();
+  const totalP=Number(document.getElementById('ptotal').value)||0; const pct=Number(document.getElementById('slider').value); const aPer=Math.round(totalP*pct/100), bPer=totalP-aPer; const mode=document.getElementById('pmode').value; const expT=getExpT();
+  const bks=[];
+  paychecks.a.forEach((p, idx)=>bks.push({key:`aP${idx+1}`, lbl:`${aN} — Paycheck ${idx+1}`, who:'a', gross:Number(p.amount)||0, rem:Number(p.amount)||0, keep:0, xfers:[]}));
+  paychecks.b.forEach((p, idx)=>bks.push({key:`bP${idx+1}`, lbl:`${bN} — Paycheck ${idx+1}`, who:'b', gross:Number(p.amount)||0, rem:Number(p.amount)||0, keep:0, xfers:[]}));
   const warns=[];
-
+  const aBks=bks.filter(b=>b.who==='a'); const bBks=bks.filter(b=>b.who==='b');
   if(mode==='p1'){
-    bA1.keep=Math.min(aPer,bA1.rem);bA1.rem-=bA1.keep;
-    bB1.keep=Math.min(bPer,bB1.rem);bB1.rem-=bB1.keep;
-    if(bA1.keep<aPer)warns.push({t:'w',m:`${aN}'s paycheck 1 is ${fmt(aPer-bA1.keep)} short for personal spend.`});
-    if(bB1.keep<bPer)warns.push({t:'w',m:`${bN}'s paycheck 1 is ${fmt(bPer-bB1.keep)} short for personal spend.`});
+    if(aBks[0]){ aBks[0].keep=Math.min(aPer,aBks[0].rem); aBks[0].rem-=aBks[0].keep; if(aBks[0].keep<aPer) warns.push({t:'w',m:`${aN}'s first paycheck is ${fmt(aPer-aBks[0].keep)} short for personal spending.`}); }
+    if(bBks[0]){ bBks[0].keep=Math.min(bPer,bBks[0].rem); bBks[0].rem-=bBks[0].keep; if(bBks[0].keep<bPer) warns.push({t:'w',m:`${bN}'s first paycheck is ${fmt(bPer-bBks[0].keep)} short for personal spending.`}); }
   } else {
-    const aH=Math.round(aPer/2),aR=aPer-aH;
-    bA1.keep=Math.min(aH,bA1.rem);bA1.rem-=bA1.keep;
-    bA2.keep=Math.min(aR,bA2.rem);bA2.rem-=bA2.keep;
-    const bH=Math.round(bPer/2),bR=bPer-bH;
-    bB1.keep=Math.min(bH,bB1.rem);bB1.rem-=bB1.keep;
-    bB2.keep=Math.min(bR,bB2.rem);bB2.rem-=bB2.keep;
+    const splitAcross=(arr, total)=>{ const count=arr.length||1; const base=Math.floor(total/count); let remainder=total-base*count; arr.forEach((bk, idx)=>{ const target=base + (idx<remainder?1:0); bk.keep=Math.min(target,bk.rem); bk.rem-=bk.keep; if(bk.keep<target) warns.push({t:'w',m:`${bk.lbl} is ${fmt(target-bk.keep)} short for personal spending.`}); }); };
+    splitAcross(aBks, aPer); splitAcross(bBks, bPer);
   }
-
-  function fund(name,needed,list){
-    let f=0;
-    for(const bk of list){
-      if(needed<=0)break;
-      const g=Math.min(bk.rem,needed);
-      if(g>0){bk.xfers.push({to:name,a:g});bk.rem-=g;f+=g;needed-=g;}
-    }
-    return f;
-  }
-
-  const expF=fund('Shared expense account',expT,bks);
-  if(expF<expT)warns.push({t:'e',m:`Shortfall of ${fmt(expT-expF)} for shared expenses.`});
-
+  function fund(name, needed, list){ let f=0; for(const bk of list){ if(needed<=0) break; const g=Math.min(bk.rem, needed); if(g>0){ bk.xfers.push({to:name,a:g}); bk.rem-=g; f+=g; needed-=g; }} return f; }
+  const orderedBks=[...aBks, ...bBks];
+  const expF=fund('Shared expense account', expT, orderedBks); if(expF<expT) warns.push({t:'e',m:`Shortfall of ${fmt(expT-expF)} for shared expenses.`});
   const acctSum=[];
-  accounts.forEach((ac,i)=>{
-    if(ac.target<=0)return;
-    const avail=bks.reduce((s,b)=>s+b.rem,0);
-    const isP2=i===0;
-    let toFund=ac.target;
-    if(isP2&&!ac.partial&&avail<ac.target){
-      warns.push({t:'w',m:`Not enough for "${ac.name}" (need ${fmt(ac.target)}, available ${fmt(avail)}). Enable "allow partial fund" to use what's available.`});
-      acctSum.push({name:ac.name,target:ac.target,funded:0});return;
-    }
-    if(ac.partial)toFund=Math.min(ac.target,avail);
-    const funded=fund(ac.name,toFund,bks);
-    if(funded<ac.target)warns.push({t:'w',m:`"${ac.name}": funded ${fmt(funded)} of ${fmt(ac.target)}.`});
-    acctSum.push({name:ac.name,target:ac.target,funded});
-  });
-
-  const totInc=bks.reduce((s,b)=>s+b.gross,0);
-  const totLeft=bks.reduce((s,b)=>s+b.rem,0);
-  renderResults(bks,warns,{expF,expT,acctSum,totInc,totLeft,aN,bN});
-  showTab('results');
+  accounts.forEach((ac,i)=>{ const avail=orderedBks.reduce((s,b)=>s+b.rem,0); const isP2=i===0; if(ac.sweep){ const funded=fund(ac.name, avail, orderedBks); acctSum.push({name:ac.name,target:'remaining',funded,sweep:true}); return; } if(ac.target<=0) return; let toFund=ac.target; if(isP2 && !ac.partial && avail<ac.target){ warns.push({t:'w',m:`Not enough left for "${ac.name}" (need ${fmt(ac.target)}, available ${fmt(avail)}). Enable partial fund to use what's left.`}); acctSum.push({name:ac.name,target:ac.target,funded:0}); return; } if(ac.partial) toFund=Math.min(ac.target, avail); const funded=fund(ac.name, toFund, orderedBks); if(funded<ac.target) warns.push({t:'w',m:`"${ac.name}": funded ${fmt(funded)} of ${fmt(ac.target)}.`}); acctSum.push({name:ac.name,target:ac.target,funded}); });
+  const totInc=bks.reduce((s,b)=>s+b.gross,0); const totLeft=bks.reduce((s,b)=>s+b.rem,0); renderPlan(bks, warns, {expF, expT, acctSum, totInc, totLeft, aN, bN});
 }
 
-function renderResults(bks,warns,sum){
-  let h='';
-  warns.forEach(w=>{h+=`<div class="${w.t==='e'?'ebox':'wbox'}"><span>${w.t==='e'?'🚨':'⚠️'}</span><span>${w.m}</span></div>`;});
-
-  h+='<div class="mstrip">';
-  h+=`<div class="mcell"><div class="mlbl">Total income</div><div class="mval">${fmt(sum.totInc)}</div></div>`;
-  h+=`<div class="mcell mpink"><div class="mlbl">Shared expenses</div><div class="mval">${fmt(sum.expF)}</div><div class="msub">of ${fmt(sum.expT)}</div></div>`;
-  sum.acctSum.forEach(a=>{h+=`<div class="mcell"><div class="mlbl">${a.name}</div><div class="mval">${fmt(a.funded)}</div><div class="msub">of ${fmt(a.target)}</div></div>`;});
-  h+=`<div class="mcell mgreen"><div class="mlbl">Total leftover</div><div class="mval">${fmt(sum.totLeft)}</div></div>`;
+function renderPlan(bks, warns, sum){
+  document.getElementById('builder').classList.add('hidden');
+  const planSection=document.getElementById('plan-section');
+  const output=document.getElementById('plan-output');
+  planSection.classList.remove('hidden');
+  let h=`<div style="margin-bottom:32px;"><span class="section-eyebrow">Your monthly plan</span><h2 style="font-family:'Fraunces',serif;font-size:clamp(26px,3vw,36px);font-weight:500;letter-spacing:-0.02em;color:var(--ink);line-height:1.1;margin-bottom:8px;">${sum.aN} &amp; ${sum.bN}'s paycheck plan</h2><p style="font-size:14px;color:var(--gray-600);">Follow these steps each time you get paid this month.</p></div>`;
+  warns.forEach(w=>{ h+=`<div class="${w.t==='e'?'ebox':'wbox'}"><span>${w.t==='e'?'🚨':'⚠️'}</span><span>${w.m}</span></div>`; });
+  h+='<div class="plan-strip">';
+  h+=`<div class="strip-cell"><div class="strip-lbl">Total income</div><div class="strip-val">${fmt(sum.totInc)}</div></div>`;
+  h+=`<div class="strip-cell is-pink"><div class="strip-lbl">Shared expenses</div><div class="strip-val">${fmt(sum.expF)}</div><div class="strip-sub">of ${fmt(sum.expT)}</div></div>`;
+  sum.acctSum.forEach(a=>{ h+=`<div class="strip-cell"><div class="strip-lbl">${a.name}</div><div class="strip-val">${fmt(a.funded)}</div><div class="strip-sub">${a.sweep?'all remaining':('of '+fmt(a.target))}</div></div>`; });
+  h+=`<div class="strip-cell is-green"><div class="strip-lbl">Leftover</div><div class="strip-val">${fmt(sum.totLeft)}</div></div>`;
   h+='</div>';
-
-  h+='<div class="pcgrid">';
-  bks.forEach(bk=>{
-    if(bk.gross===0)return;
-    const [who,pc]=bk.lbl.split(' — ');
-    h+=`<div class="pcblock ${bk.who==='a'?'isA':''}">
-      <div class="pchead">
-        <div><div class="pcwho">${who}</div><div class="pcpc">${pc}</div></div>
-        <div><div class="pcgross-lbl">Gross</div><div class="pcgross">${fmt(bk.gross)}</div></div>
-      </div>`;
-    if(bk.keep>0)h+=`<div class="pcs pcs-keep"><span class="pcslbl">Keep — personal spend</span><span class="pcsamt">${fmt(bk.keep)}</span></div>`;
-    bk.xfers.forEach(t=>{h+=`<div class="pcs pcs-xfer"><span class="pcslbl">→ ${t.to}</span><span class="pcsamt">${fmt(t.a)}</span></div>`;});
-    if(bk.rem>0)h+=`<div class="pcs pcs-sur"><span class="pcslbl">Surplus (unallocated)</span><span class="pcsamt">${fmt(bk.rem)}</span></div>`;
-    if(bk.keep===0&&bk.xfers.length===0&&bk.rem===0)h+=`<div class="pcs pcs-none"><span class="pcslbl">No action this paycheck</span><span class="pcsamt">—</span></div>`;
-    h+='</div>';
-  });
-  h+='</div>';
-  h+=buildSankey(bks,sum.totInc,sum.aN,sum.bN);
-  document.getElementById('results').innerHTML=h;
-}
-
-function buildSankey(bks,totInc,aN,bN){
-  if(!totInc)return'';
-  const W=860,H=420,PAD=16,NW=160,NH=30;
-  const srcs=bks.filter(b=>b.gross>0);
-  const cx1=PAD,cx2=W-PAD-NW;
-  const dm={},dord=[],seen=new Set();
-  const addD=(k,v)=>{dm[k]=(dm[k]||0)+v;if(!seen.has(k)){seen.add(k);dord.push(k);}};
-  srcs.forEach(bk=>{
-    if(bk.keep>0)addD('keep_'+bk.key,bk.keep);
-    bk.xfers.forEach(t=>addD(t.to,t.a));
-    if(bk.rem>0)addD('__sur__',bk.rem);
-  });
-  const sorted=[...dord.filter(d=>d.startsWith('keep_')),...dord.filter(d=>!d.startsWith('keep_')&&d!=='__sur__'),...dord.filter(d=>d==='__sur__')];
-  const sH=Math.min((H-PAD*2)/srcs.length,72),dH=Math.min((H-PAD*2)/sorted.length,62);
-  const sY=i=>PAD+i*sH,dY=i=>PAD+i*dH;
-  const cols={};const extra=['#FF385C','#7C3AED','#0369A1','#065F46','#92400E','#B91C1C'];let ci=0;
-  sorted.forEach(d=>{
-    if(d==='Shared expense account')cols[d]='#FF385C';
-    else if(d==='__sur__')cols[d]='#1A7A28';
-    else if(d.startsWith('keep_'))cols[d]='#666';
-    else cols[d]=extra[1+ci++%(extra.length-1)];
-  });
-  const sOff={},dOff={};
-  srcs.forEach((b,i)=>{sOff[b.key]=sY(i)+2;});
-  sorted.forEach((d,i)=>{dOff[d]=dY(i)+2;});
-  let paths='',sN='',dN='';
-  srcs.forEach(bk=>{
-    const flows=[];
-    if(bk.keep>0)flows.push({dest:'keep_'+bk.key,a:bk.keep});
-    bk.xfers.forEach(t=>flows.push({dest:t.to,a:t.a}));
-    if(bk.rem>0)flows.push({dest:'__sur__',a:bk.rem});
-    flows.forEach(fl=>{
-      const di=sorted.indexOf(fl.dest);if(di===-1)return;
-      const th=Math.max(2,(fl.a/totInc)*(H-PAD*2-srcs.length*5));
-      const x1=cx1+NW,y1=sOff[bk.key]+th/2,x2=cx2,y2=dOff[fl.dest]+th/2;
-      sOff[bk.key]+=th;dOff[fl.dest]+=th;
-      const mx=(x1+x2)/2,col=cols[fl.dest]||'#999';
-      paths+=`<path d="M${x1},${y1-th/2} C${mx},${y1-th/2} ${mx},${y2-th/2} ${x2},${y2-th/2} L${x2},${y2+th/2} C${mx},${y2+th/2} ${mx},${y1+th/2} ${x1},${y1+th/2} Z" fill="${col}" fill-opacity="0.18" stroke="${col}" stroke-width="0.5" stroke-opacity="0.5"/>`;
+  const aBlocks=bks.filter(b=>b.who==='a'); const bBlocks=bks.filter(b=>b.who==='b'); const maxLen=Math.max(aBlocks.length,bBlocks.length);
+  for(let i=0;i<maxLen;i++){
+    h+='<div class="pc-pair">';
+    [aBlocks[i], bBlocks[i]].forEach(bk=>{
+      if(!bk){ h+='<div></div>'; return; }
+      const [who, pcLabel]=bk.lbl.split(' — ');
+      h+=`<div class="pc-block ${bk.who==='a'?'is-a':''}"><div class="pc-head"><div><div class="pc-who">${who}</div><div class="pc-paycheck-label">${pcLabel}</div></div><div class="pc-gross-wrap"><div class="pc-gross-lbl">Take-home</div><div class="pc-gross">${fmt(bk.gross)}</div></div></div><div class="pc-steps">`;
+      if(bk.keep>0) h+=`<div class="pc-step pc-step-keep"><div class="step-action"><span class="step-verb">Keep</span><span class="step-desc">Personal spending</span></div><span class="step-amt">${fmt(bk.keep)}</span></div>`;
+      bk.xfers.forEach(t=> h+=`<div class="pc-step pc-step-xfer"><div class="step-action"><span class="step-verb">Transfer</span><span class="step-desc">→ ${t.to}</span></div><span class="step-amt">${fmt(t.a)}</span></div>`);
+      if(bk.rem>0) h+=`<div class="pc-step pc-step-surplus"><div class="step-action"><span class="step-verb">Surplus</span><span class="step-desc">Unallocated</span></div><span class="step-amt">${fmt(bk.rem)}</span></div>`;
+      if(bk.keep===0 && bk.xfers.length===0 && bk.rem===0) h+=`<div class="pc-step pc-step-none"><div class="step-action"><span class="step-verb">—</span><span class="step-desc">No action this paycheck</span></div><span class="step-amt"></span></div>`;
+      h+='</div></div>';
     });
-  });
-  srcs.forEach((bk,i)=>{
-    const y=sY(i),col=bk.who==='a'?'#FF385C':'#1A1A1A';
-    const [person,pc]=bk.lbl.split(' — ');
-    sN+=`<rect x="${cx1}" y="${y+1}" width="${NW}" height="${Math.min(sH-4,NH)}" rx="3" fill="${col}" fill-opacity="0.08" stroke="${col}" stroke-width="1.5"/>`;
-    sN+=`<text x="${cx1+10}" y="${y+16}" font-family="DM Sans,sans-serif" font-size="11" fill="${col}" font-weight="700">${person}</text>`;
-    sN+=`<text x="${cx1+10}" y="${y+29}" font-family="DM Sans,sans-serif" font-size="10" fill="${col}" opacity="0.7">${pc} · ${fmt(bk.gross)}</text>`;
-  });
-  sorted.forEach((d,i)=>{
-    const y=dY(i),col=cols[d]||'#999';
-    const lbl=d.startsWith('keep_')?'Personal spend':d==='__sur__'?'Surplus':d;
-    dN+=`<rect x="${cx2}" y="${y+1}" width="${NW}" height="${Math.min(dH-4,NH)}" rx="3" fill="${col}" fill-opacity="0.08" stroke="${col}" stroke-width="1.5"/>`;
-    dN+=`<text x="${cx2+10}" y="${y+15}" font-family="DM Sans,sans-serif" font-size="10" fill="${col}" font-weight="700">${lbl.length>21?lbl.slice(0,19)+'…':lbl}</text>`;
-    dN+=`<text x="${cx2+10}" y="${y+27}" font-family="DM Sans,sans-serif" font-size="10" fill="${col}" opacity="0.7">${fmt(dm[d])}</text>`;
-  });
-  return`<div class="scard">
-    <div class="shead">Money flow</div>
-    <div class="ssub">How each paycheck is distributed across all destinations</div>
-    <svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:visible;min-width:480px;">${paths}${sN}${dN}</svg>
-  </div>`;
+    h+='</div>';
+  }
+  h+=`<div style="text-align:center;margin-top:32px;"><button class="btn-next" onclick="editInputs()">← Edit My Inputs</button></div>`;
+  output.innerHTML=h;
+  scrollToPlan();
 }
 
-renderExp();renderAccts();updateSplit();
+function editInputs(){ document.getElementById('plan-section').classList.add('hidden'); document.getElementById('builder').classList.remove('hidden'); scrollToBuilder(); }
+
+renderPaychecks('a'); renderPaychecks('b'); renderExp(); renderAccts(); updateSplit(); updateReview();
 </script>
 </body>
 </html>
